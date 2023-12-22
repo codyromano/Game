@@ -1,0 +1,28 @@
+.cut-scene {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
+.cut-scene p {
+  font-family: Helvetica Neue;
+  font-size: 18px;
+  max-width: 250px;
+  display: block;
+  margin: 10px auto;
+  text-align: center;
+}
+
+.cut-scene-image {
+  height: 300px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.cut-scene-title {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 5rem;
+}

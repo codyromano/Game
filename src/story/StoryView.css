@@ -1,0 +1,35 @@
+
+
+.story-text-notice {
+  background-color: lightgreen;
+  padding: 0.5rem;
+}
+
+.story-main-title {
+  font-size: 4rem;
+  margin: 2.5rem auto;
+  text-align: center;
+}
+
+.story-text-container {
+  height: 75vh;
+
+}
+
+.story-text-container p {
+  font-size: 1.25rem;
+
+  /* TODO: Better font */
+  font-family: Helvetica Georgia, 'Times New Roman', Times, serif; 
+  line-height: 150%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
+.story-text-container p::first-letter {
+  font-size: 300%;
+  display: block;
+  float: left;
+  margin: 1rem 0.5rem 0.15rem 0;
+}

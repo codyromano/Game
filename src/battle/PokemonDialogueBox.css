@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "PressStart";
+  src: url("/public/fonts/PressStart.ttf") format("truetype");
+}
+
+.pokemon-dialogue-box {
+  background-color: #fff;
+  border: 2px solid #000;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.pokemon-dialogue-box p {
+  margin: 0;
+  font-family: "PressStart", cursive;
+  font-size: 13px;
+  line-height: 30px;
+}
+
+.battle-card {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.battle-card * {
+  font-family: "PressStart", cursive;
+}
+
+.battle-card label {
+  font-size: 10px;
+}
+
+.battle-card-progress {
+  width: 100px;
+  border-radius: 5px;
+}
+
+/* Style for the filled part of the progress bar */
+progress.battle-card-progress::-webkit-progress-value {
+  background-color: #000;
+  border-radius: 5px;
+}
+
+progress.battle-card-progress::-moz-progress-value {
+  background-color: white;
+  border-radius: 5px;
+}
+
+.player-image {
+  height: 200px;
+  flex: 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.pokemon-menu {
+  margin-top: 1rem;
+}
+
+.pokemon-menu-item {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.pokemon-menu-item button {
+  cursor: pointer;
+  font-family: "PressStart", cursive;
+}

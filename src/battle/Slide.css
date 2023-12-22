@@ -1,0 +1,32 @@
+/* Slide.css */
+.slide-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.slide-container.left {
+  animation: slideLeft 2s ease-in-out;
+}
+
+.slide-container.right {
+  animation: slideRight 2s ease-in-out;
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

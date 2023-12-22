@@ -1,4 +1,113 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
+@font-face {
+  font-family: "SimpleGames";
+  src: url("/public/SimpleGames-JR6on.ttf") format("truetype");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+button {
+  appearance: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+main {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+
+h1,
+label {
+  font-family: "SimpleGames", sans-serif;
+}
+
+header,
+footer {
+  height: 50px;
+  display: flex;
+
+  align-items: center;
+  background-color: rgb(134, 41, 38);
+
+  color: rgb(243, 242, 236);
+}
+
+.center-content {
+  width: 100%;
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.primary-section {
+  flex: 1;
+  /* TODO: Update canvas height calculation to remove this */
+  overflow: hidden;
+}
+
+.map-container {
+  background-color: #000;
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Common style for the progress bars */
+progress {
+  width: 200px; /* Adjust the width as needed */
+  height: 20px; /* Adjust the height as needed */
+  margin-bottom: 10px; /* Adjust the spacing between progress bars */
+  border: 2px solid #ddd; /* Border for a thicker appearance */
+  border-radius: 5px; /* Optional: Add border radius for rounded corners */
+}
+
+/* Style for the filled part of the progress bar */
+progress::-webkit-progress-value {
+  background-color: white;
+}
+
+progress::-moz-progress-value {
+  background-color: white;
+}
+
+/* Style for the unfilled part of the progress bar */
+progress::-webkit-progress-bar {
+  background-color: transparent;
+}
+
+progress::-moz-progress-bar {
+  background-color: transparent;
+}
+
+/* Style for the progress bar labels */
+.progress-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.progress-container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.progress-container label {
+  font-size: 2rem;
 }
