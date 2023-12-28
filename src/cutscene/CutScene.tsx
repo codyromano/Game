@@ -10,24 +10,28 @@ import {
 import "./CutScene.css";
 
 const cutSceneImages: Record<string, string> = {
-  "battle-win": "/images/cutscenes/battle-win.jpeg",
+  "battle-win": "/images/characters/joycie-full.png",
   fainted: "/images/cutscenes/momo-fainted.jpeg",
+  run: "/images/characters/joycie-full.png"
 };
 
 const headings: Record<string, string> = {
-  "battle-win": "You win!",
+  "battle-win": "Victory!",
   fainted: "Momo Fainted",
+  run: "Escaped",
 };
 
 const descriptions: Record<string, string> = {
-  "battle-win": "You gained XP!",
+  "battle-win": "You gained XP and unlocked part of a Christmas story!",
   fainted:
     "Momo was running low on energy or health, and he needed to take a nap.",
+  run: "You rushed out of harm's way 😅"
 };
 
 const buttons: Record<string, () => Array<{ text: string; url: string }>> = {
-  "battle-win": () => [{ text: "Continue", url: "/" }],
+  "battle-win": () => [{ text: "Read Storyline", url: "/story" }],
   fainted: () => [{ text: "Play again", url: "/" }],
+  run: () => [{ text: "Continue", url: "/" }],
 };
 
 const stateUpdates: Record<string, React.SetStateAction<GameState>> = {
@@ -46,6 +50,13 @@ const stateUpdates: Record<string, React.SetStateAction<GameState>> = {
       },
     };
   },
+
+  run: (state) => {
+    return {
+      ...state,
+      currentPosition: getInitialState().currentPosition,
+    }
+  }
 };
 
 export default function CutScene() {

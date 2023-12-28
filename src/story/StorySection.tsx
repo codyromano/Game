@@ -1,71 +1,53 @@
 // StorySection.tsx
-import React, { useState, useEffect } from "react";
-import { useSpring, animated } from "react-spring";
+import React, { useRef, useState } from "react";
 
 interface StorySectionProps {
   children: React.ReactNode;
-  onNextSection?: () => void;
-  onPrevSection?: () => void;
+  sectionIndex: number,
+
 }
+
+// TODO: Enable snappy scrolling
+
+// Unit is vh
+/* eslint-disable */
+const STORY_CONTAINER_HEIGHT = 80;
 
 const StorySection: React.FC<StorySectionProps> = ({
   children,
-  onNextSection,
-  onPrevSection,
+  sectionIndex,
 }) => {
-  const [isSwiping, setIsSwiping] = useState(false);
-
-  const [{ y }, set] = useSpring(() => ({
-    y: 0,
-    onFrame: ({ y }: { y: number }) => handleScroll(y),
-  }));
-
-  const handleScroll = (y: number) => {
-    console.log("handleScroll");
-    if (isSwiping) {
-      return;
-    }
-
-    if (y >= 100 && onNextSection) {
-      set({ y: y + 500 });
-
-      onNextSection();
-    } else if (y <= -100 && onPrevSection) {
-      set({ y: y - 500 });
-      onPrevSection();
-    }
-  };
-
+  const [activeSection, setActiveSection] = useState<number>(sectionIndex);
+  const animationIsActiveRef = useRef<boolean>(false);
   const handleTouchStart = () => {
-    console.log("handleTouchStart");
-    setIsSwiping(true);
-  };
 
-  const handleTouchEnd = () => {
-    console.log("handleTouchEnd");
-    setIsSwiping(false);
+    if (!animationIsActiveRef.current) {
+    animationIsActiveRef.current = true;
+    setActiveSection(i => ++i);
+    }
   };
-
-  useEffect(() => {
-    set({ y: 0 });
-  }, [set]);
 
   return (
-    <section
-      className="story-text-container"
+    <div
+      className="story-scroll-container"
       style={{
-        height: "90vh",
-        overflow: "hidden",
+        /*
+        height: `${STORY_CONTAINER_HEIGHT}vh`,
         touchAction: "pan-y",
-        backgroundColor: "teal",
-        transform: y.to((value) => `translate3d(0, ${value}px, 0)`),
+        transform: `translate3d(0, -${STORY_CONTAINER_HEIGHT * activeSection}vh, 0)`,
+        */
       }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleTouchStart}
+
+      onTransitionEnd={() => {
+
+        animationIsActiveRef.current = false;
+      }}
     >
       {children}
-    </section>
+    </div>
   );
 };
+/* eslint-enable */
 
 export default StorySection;

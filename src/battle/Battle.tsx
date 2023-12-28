@@ -17,6 +17,7 @@ const sleep = (time: number) =>
 
 enum BattleStep {
   INTRO,
+  ATTACK_OR_RUN,
   SELECT_ATTACK,
   AFTER_ATTACK_SUMMARY,
   DODGE_ATTACK,
@@ -63,11 +64,28 @@ const Battle = () => {
 
   const animateBattle = async () => {
     await sleep(3000);
+
+    const enemyLevel = character.getLevel();
+    const momoLevel = momo.getLevel();
+
+    let introMessage = "Ready to battle?";
+    if (enemyLevel - momoLevel > 5) {
+      introMessage = `⚠️ This enemy (Lvl ${enemyLevel}) is much stronger than you (Lvl ${momoLevel}).`;
+    }
+
+    setComponentState((state) => ({
+      ...state,
+      messages: [introMessage],
+      step: BattleStep.ATTACK_OR_RUN,
+    }))
+
+    /*
     setComponentState((state) => ({
       ...state,
       messages: ["Choose an attack"],
       step: BattleStep.SELECT_ATTACK,
     }));
+    */
   };
 
   useEffect(() => {
@@ -199,6 +217,17 @@ const Battle = () => {
     }
   }, [game]);
 
+  let dialogueOptions: string[] = [];
+
+  switch (componentState.step) {
+    case BattleStep.ATTACK_OR_RUN: 
+      dialogueOptions = ['Attack', 'Run'];
+    break;
+    case BattleStep.SELECT_ATTACK:
+      dialogueOptions = momo.getAttackTypes();
+    break;
+  }
+
   return (
     <main>
       <section
@@ -274,13 +303,29 @@ const Battle = () => {
 
         <div className="center-content">
           <PokemonDialogueBox
-            onSelectOption={(option) => onSelectAttack(option)}
+            onSelectOption={(option) => {
+              switch (componentState.step) {
+                case BattleStep.SELECT_ATTACK: 
+                  onSelectAttack(option);
+                break;
+                case BattleStep.ATTACK_OR_RUN: {
+                  if (option === 'Run') {
+                    navigate("/cutscene/run");
+                    return;
+                  }
+                  if (option === 'Attack') {
+                    setComponentState((state) => ({
+                      ...state,
+                      messages: ["Choose an attack"],
+                      step: BattleStep.SELECT_ATTACK,
+                    }));
+                  }
+                break;
+                }
+              }
+            }}
             messages={componentState.messages}
-            options={
-              componentState.step == BattleStep.SELECT_ATTACK
-                ? momo.getAttackTypes()
-                : []
-            }
+            options={dialogueOptions}
           />
 
           {componentState.step === BattleStep.DODGE_ATTACK &&

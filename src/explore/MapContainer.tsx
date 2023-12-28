@@ -6,6 +6,7 @@ import { useContext, useEffect } from "react";
 import Map from "./Map2";
 import { momo } from "../characters/MomoCharacter";
 import { GameStateContext } from "../GameStateProvider";
+import getNearestAllowablePosition from "./getNearestAllowablePosition";
 // import { momo } from "../characters/MomoCharacter";
 
 export default function MapContainer() {
@@ -41,6 +42,8 @@ export default function MapContainer() {
             const tileType = tiles?.[position[0]]?.[position[1]];
             const isTraversable = tileAttributes[tileType]?.traversable;
 
+            const nextPosition = getNearestAllowablePosition(game.currentPosition, position, tiles, game.characterPositions) ?? game.currentPosition;
+
             if (isTraversable) {
               // TODO: Renable this if you want to add energy system
               // momo.modifyEnergy(-3);
@@ -48,7 +51,8 @@ export default function MapContainer() {
               setGame((state) => ({
                 ...state,
                 ...momo.serialize(state),
-                currentPosition: position,
+                // currentPosition: position,
+                currentPosition: nextPosition,
               }));
             }
           }}

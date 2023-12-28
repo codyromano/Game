@@ -1,35 +1,48 @@
 
 
 .story-text-notice {
-  background-color: lightgreen;
+  background-color: aqua;
+  max-width: 100%;
   padding: 0.5rem;
 }
 
 .story-main-title {
-  font-size: 4rem;
-  margin: 2.5rem auto;
+  font-size: 2.5rem;
+  margin: 0.5rem auto;
   text-align: center;
+
+  position: absolute;
+  width: 100%;
+  color: #fff;
+
+  /* Hack to match parent container */
+  max-width: 1000px;
 }
 
-.story-text-container {
-  height: 75vh;
 
+.story-image {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .story-text-container p {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
 
   /* TODO: Better font */
   font-family: Helvetica Georgia, 'Times New Roman', Times, serif; 
   line-height: 150%;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1rem 0.25rem;
 }
 
 
-.story-text-container p::first-letter {
+.story-text-container:first-of-type p::first-letter {
   font-size: 300%;
   display: block;
   float: left;
   margin: 1rem 0.5rem 0.15rem 0;
+}
+
+.story-scroll-container {
+  transition: all ease 1s;
 }
