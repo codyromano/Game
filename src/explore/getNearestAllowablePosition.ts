@@ -1,18 +1,42 @@
 import { TileType, tileAttributes } from "./tiles";
 
+const getDistanceScore = (current: [number,number], target: [number, number]): number => {
+  return Math.abs(current[0] - target[0]) + Math.abs(current[1] - target[1]);
+};
+
 /**
  * Given a current set of coordinates and target coordinates, determine the farthest point we can reach by traveling in a straight line,
  * until we reach a tile that is not traversable or inhabited by another character.
  */
-export default function getNearestAllowablePosition(current: [number,number], target: [number, number], tiles: TileType[][], characterMap: Record<string, string>): [number, number] | null {  
+export default function getNearestAllowablePosition(
+  current: [number,number], target: [number, number],
+  tiles: TileType[][],
+  characterMap: Record<string, string>): [number, number] | null {  
   // All the coordinates along the route to the target destination (straight line)
-  const coordsOnRoute: Array<[number, number]> = [current];
-  let previousCoords: [number, number] | null = null;
+  const coordsOnRoute: Array<{
+    current: [number, number],
+    direction: [number, number]
+  }> = [
+    // Up
+    {current, direction: [-1, 0]},
+    // Down
+    {current, direction: [1, 0]},
+    // Left
+    {current, direction: [0, -1]},
+    // Right
+    {current, direction: [0, 1]},
+    // Diagonal - Up, left
+    {current, direction: [-1, -1]},
+    // Diagonal - Up, right
+    {current, direction: [-1, 1]},
+    // Diagonal - Down, left 
+    {current, direction: [1, -1]},
+    // Diagonal - Down, right 
+    {current, direction: [1, 1]}
+  ];
 
-  const directionX = Math.min(1, Math.max(-1, target[0] - current[0]));
-  const directionY = Math.min(1, Math.max(-1, target[1] - current[1]));
-
-  const visited: Record<string, boolean> = {};
+  let shortestDistance = Infinity;
+  let bestCoords: [number, number] | null = null;
 
   while (coordsOnRoute.length) {
     const coords = coordsOnRoute.pop();
@@ -21,30 +45,21 @@ export default function getNearestAllowablePosition(current: [number,number], ta
       return null;
     }
 
-    const memoKey = `${coords.join(',')}`;
-
-    if (visited[memoKey]) {
-      continue;
-    }
-
-    visited[memoKey] = true;
-
     // We've reached the target destination
-    if (coords[0] === target[0] && coords[1] === target[1]) {
-      return coords;
+    if (coords.current[0] === target[0] && coords.current[1] === target[1]) {
+      return coords.current;
     }
 
     // If we've reached a non-traversable tile, return the closest traversable 
     // tile previously encountered or null if no such tile exists
-    const tileType: TileType | null = tiles?.[coords[0]]?.[coords[1]];
+    const tileType: TileType | null = tiles?.[coords.current[0]]?.[coords.current[1]];
 
     // Tile is out of bounds or not traversable 
     if (tileType == null || !tileAttributes[tileType].traversable) {
       continue;
-      // return previousCoords; 
     }
 
-    const tileHasCharacter = characterMap[`${coords[0]},${coords[1]}`] != null;
+    const tileHasCharacter = characterMap[`${coords.current[0]},${coords.current[1]}`] != null;
     const isCharacterAdjacent = Math.abs(current[0] - target[0]) === 1 || Math.abs(current[1] - target[1]);
 
     if (tileHasCharacter) {
@@ -61,12 +76,14 @@ export default function getNearestAllowablePosition(current: [number,number], ta
       return target;
     }
 
-    coordsOnRoute.push([coords[0] + directionX, coords[1] + directionY]);
-    coordsOnRoute.push([coords[0], coords[1] + directionY]);
-    coordsOnRoute.push([coords[0] + directionX, coords[1]]);
+    const score = getDistanceScore(coords.current, target);
+    if (score < shortestDistance) {
+      shortestDistance = score;
+      bestCoords = coords.current;
+    }
 
-    previousCoords = coords; 
+    coordsOnRoute.push({current: [coords.current[0] + coords.direction[0], coords.current[1] + coords.direction[1]], direction: coords.direction});
   }
 
-  return previousCoords;
+  return bestCoords;
 }

@@ -3,6 +3,11 @@
   src: url("/public/SimpleGames-JR6on.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "PressStart";
+  src: url("/public/fonts/PressStart.ttf") format("truetype");
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -28,7 +33,13 @@ main {
 
 h1,
 label {
-  font-family: "SimpleGames", sans-serif;
+  /* font-family: "SimpleGames", sans-serif; */
+  font-family: PressStart;
+  font-size: 1rem;
+}
+
+body {
+  font-family: Helvetica;
 }
 
 header,

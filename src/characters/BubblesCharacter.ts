@@ -2,16 +2,18 @@ import { TileType } from "../explore/tiles";
 import BaseCharacter, { AttackEffectiness } from "./BaseCharacter";
 import { MomoAttacks } from "./MomoCharacter";
 
+const spawnPositions: Set<string> = new Set(['4,5', '7,7', '12,5']);
+
 export default class BubblesCharacter extends BaseCharacter {
-  readonly name: string = "bubbles";
+  readonly characterName: string = "Aquaticoon";
   readonly imageOptimized: string = "/images/bubbles-small.png";
   readonly imageFull: string = "/images/bubbles-full-alpha.png";
 
-  spawnProbability: number = 0.05;
+  spawnProbability: number = 1;
   level = 2;
 
-  isEligibleForTile(tile: TileType) {
-    return tile === "water";
+  isEligibleForTile(_: TileType, coords: [number, number]) {
+    return spawnPositions.has(coords.join(','));
   }
 
   receiveAttack(attackType: string) {

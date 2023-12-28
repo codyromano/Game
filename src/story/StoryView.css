@@ -30,7 +30,7 @@
   font-size: 1.15rem;
 
   /* TODO: Better font */
-  font-family: Helvetica Georgia, 'Times New Roman', Times, serif; 
+  font-family: Helvetica;
   line-height: 150%;
   padding: 1rem 0.25rem;
 }

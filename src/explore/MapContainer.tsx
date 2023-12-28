@@ -5,9 +5,22 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import Map from "./Map2";
 import { momo } from "../characters/MomoCharacter";
-import { GameStateContext } from "../GameStateProvider";
+import { GameState, GameStateContext } from "../GameStateProvider";
 import getNearestAllowablePosition from "./getNearestAllowablePosition";
 // import { momo } from "../characters/MomoCharacter";
+
+const filterUsedItems = (items: GameState['items']): GameState['items'] => {
+  const newItems = {...items};
+  for (const position in items) {
+    const item = items[position];
+    const isUsedItem = item.timeLastUsed != null && Date.now() - item.timeLastUsed <= 864000;
+
+    if (isUsedItem) {
+      delete newItems[position];
+    }
+  }
+  return newItems;
+};
 
 export default function MapContainer() {
   const { state: game, setState: setGame } = useContext(GameStateContext);
@@ -16,19 +29,27 @@ export default function MapContainer() {
 
   // Navigate to battle sequence if we land on a tile w/ a character
   useEffect(() => {
+    const position = game.currentPosition.join(",");
     const positionHasCharacter =
-      game.characterPositions[game.currentPosition.join(",")];
+      game.characterPositions[position];
+
+    // TODO: The expiration time check shouldn't happen here. Ideally delegate to the item class
+    const positionHasItem = filterUsedItems(game.items)[position] != null;
+    const [x, y] = game.currentPosition;
 
     // TODO: For now, assume all characters are battle-able. This
     // may not necessary be true.
     if (positionHasCharacter) {
-      const [x, y] = game.currentPosition;
       navigate(`/battle/${x}/${y}`);
+    } else if (positionHasItem) {
+      navigate(`/cutscene/item`);
     }
+    /*
     if (game.momo.energy === 0) {
       navigate("/cutscene/fainted");
     }
-  }, [game.currentPosition, game.momo.energy]);
+    */
+  }, [game.currentPosition, game.items, game.characterPositions, game.momo.energy]);
 
   return (
     <PreloadAssets>
@@ -38,6 +59,7 @@ export default function MapContainer() {
           tiles={tiles}
           centerPosition={game.currentPosition}
           characterPositions={game.characterPositions}
+          items={filterUsedItems(game.items)}
           onSelectTile={(position) => {
             const tileType = tiles?.[position[0]]?.[position[1]];
             const isTraversable = tileAttributes[tileType]?.traversable;
@@ -52,6 +74,7 @@ export default function MapContainer() {
                 ...state,
                 ...momo.serialize(state),
                 // currentPosition: position,
+                previousPosition: state.currentPosition,
                 currentPosition: nextPosition,
               }));
             }

@@ -1,4 +1,5 @@
 // import Story from "./story/Story";
+import "./styles.css";
 
 type Props = {
   energy: number;
@@ -19,11 +20,11 @@ export default function GameFooter({ energy, health }: Props) {
           <progress id="energyBar" value={energy} max="100"></progress>
           */}
 
-          <label htmlFor="storyProgress" className="progress-label">
+          <label style={{fontSize: '15px',}} className="progress-label">
             {/* Progress {Story.getProgressPercentage(30)} */}
             Health
           </label>
-          <progress id="storyProgress" value={health} max="100"></progress>
+          <progress value={health} max="100" />
 
           {/*
 

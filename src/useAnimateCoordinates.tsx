@@ -1,65 +1,51 @@
-import { useRef /* useEffect, useCallback*/ } from "react";
+import {useEffect, useRef, useCallback } from 'react';
 
 interface AnimatedCoordinates {
   x: number;
   y: number;
 }
 
-interface AnimatedCoordinatesOptions {
-  duration: number;
-}
+const useAnimatedCoordinates = (initialX: number, initialY: number, time: number): AnimatedCoordinates => {
+  const animatedCoordinatesRef = useRef<AnimatedCoordinates>({
+    x: initialX,
+    y: initialY,
+  });
 
-interface AnimatedCoordinatesHook extends AnimatedCoordinates {
-  setCoordinates: (newX: number, newY: number) => void;
-}
+  const animationFrameRef = useRef<number>();
 
-const useAnimatedCoordinates = (
-  initialCoordinates: AnimatedCoordinates,
-  // eslint-disable-next-line
-  options: AnimatedCoordinatesOptions,
-): AnimatedCoordinatesHook => {
-  const coordRef = useRef<AnimatedCoordinates>(initialCoordinates);
+  // console.log(`player position: ${initialX}, ${initialY}`);
 
-  /*
-  const animateCoordinates = useCallback(
-    (newX: number, newY: number) => {
-      const startTime = Date.now();
+  const cleanup = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);  
+    }
+  };
 
-      const updateCoordinates = () => {
-        const currentTime = Date.now();
-        const progress = (currentTime - startTime) / options.duration;
+  const animate = useCallback(
+    (startTime: number) => {
+      const progress = Math.min(1, (Date.now() - startTime) / time);
 
-        if (progress < 1) {
-          setCoordinates({
-            x: initialCoordinates.x + (newX - initialCoordinates.x) * progress,
-            y: initialCoordinates.y + (newY - initialCoordinates.y) * progress,
-          });
-
-          requestAnimationFrame(updateCoordinates);
-        } else {
-          setCoordinates({ x: newX, y: newY });
-        }
+      animatedCoordinatesRef.current = {
+        x: animatedCoordinatesRef.current.x + (initialX - animatedCoordinatesRef.current.x) * progress,
+        y: animatedCoordinatesRef.current.y + (initialY - animatedCoordinatesRef.current.y) * progress,
       };
 
-      requestAnimationFrame(updateCoordinates);
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(() => animate(startTime));
+      }
     },
-    [initialCoordinates.x, initialCoordinates.y, options.duration],
+    [initialX, initialY, time]
   );
-*/
-  /*
-  useEffect(() => {
-    setCoordinates(initialCoordinates);
-  }, [initialCoordinates]);
-  */
 
-  return {
-    x: coordRef.current.x,
-    y: coordRef.current.y,
-    setCoordinates: (x: number, y: number) => {
-      coordRef.current.x = x;
-      coordRef.current.y = y;
-    },
-  };
+  useEffect(() => {
+    cleanup();
+
+    const startTime = Date.now();
+    animationFrameRef.current = requestAnimationFrame(() => animate(startTime));
+    return cleanup;
+  }, [initialX, initialY]);
+
+  return animatedCoordinatesRef.current;
 };
 
 export default useAnimatedCoordinates;

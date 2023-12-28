@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import characters from "../characters";
+// import characters from "../characters";
 // import PokemonDialogueBox from "./PokemonDialogBox";
 import "./PokemonDialogueBox.css";
 
@@ -10,6 +10,7 @@ import { momo } from "../characters/MomoCharacter";
 import { AttackEffectiness } from "../characters/BaseCharacter";
 import PokemonDialogueBox from "./PokemonDialogBox";
 import { GameStateContext } from "../GameStateProvider";
+import CharacterFactory from "../characters/CharacterFactory";
 // import BaseCharacter from "../characters/BaseCharacter";
 
 const sleep = (time: number) =>
@@ -37,18 +38,39 @@ const attackEffectinessLabels: {
   [AttackEffectiness.WEAK]: `It's barely effective`,
 };
 
-const DODGE_THRESHOLD = 1000 / 3;
-
 const Battle = () => {
+  // TODO: These parameters aren't actually needed. We just read the player's current
+  // position from the game state.
   const { x, y } = useParams();
   const navigate = useNavigate();
   const { state: game, updateState: updateGameState } =
     useContext(GameStateContext);
 
+  /*
+
   const character = characters.find(
     // A recently defeated character can be found in the defeated map
     (c) => c.name === game.characterPositions[`${x},${y}`] || c.name === game.charactersDefeatedByPosition[`${x},${y}`]
   );
+  */
+
+  /*
+  const characterName =
+    game.characterPositions[`${x},${y}`] ||
+    game.charactersDefeatedByPosition[`${x},${y}`];
+  if (x == null || y == null || characterName == null) {
+    console.log("game: ", game);
+    throw new Error("oh noir where be the x or y");
+  }
+
+  const character = CharacterFactory.createAtPosition(
+    parseInt(x),
+    parseInt(y),
+    characterName,
+  );
+  */
+
+  const character = CharacterFactory.getAtPosition(...game.currentPosition);
 
   if (character == null) {
     throw new Error(
@@ -59,7 +81,7 @@ const Battle = () => {
 
   const [componentState, setComponentState] = useState<BattleState>({
     step: BattleStep.INTRO,
-    messages: [`${character?.name} wants to fight`],
+    messages: [`${character?.characterName} wants to fight`],
   });
 
   const animateBattle = async () => {
@@ -77,7 +99,7 @@ const Battle = () => {
       ...state,
       messages: [introMessage],
       step: BattleStep.ATTACK_OR_RUN,
-    }))
+    }));
 
     /*
     setComponentState((state) => ({
@@ -119,7 +141,7 @@ const Battle = () => {
 
       setComponentState((state) => ({
         ...state,
-        messages: [`${character.name} used ${nextAttack}`],
+        messages: [`${character.characterName} used ${nextAttack}`],
       }));
 
       await sleep(3000);
@@ -164,7 +186,7 @@ const Battle = () => {
         }));
 
         momo.receiveAttack(nextAttack, character);
-      } else if (Math.abs(offsetTime) > DODGE_THRESHOLD) {
+      } else if (Math.abs(offsetTime) > character.getDodgeTimeLimit()) {
         const offsetLabel =
           offsetTime < 0 ? "Dodged too late!" : "Dodged too soon!";
 
@@ -201,9 +223,10 @@ const Battle = () => {
       // Register victory
       updateGameState({
         ...game,
+        ...momo.serialize(game),
         charactersDefeatedByPosition: {
           ...game.charactersDefeatedByPosition,
-          [`${x},${y}`]: character.name,
+          [`${x},${y}`]: character.characterName,
         },
       });
       // navigate("/cutscene/battle-win");
@@ -220,12 +243,12 @@ const Battle = () => {
   let dialogueOptions: string[] = [];
 
   switch (componentState.step) {
-    case BattleStep.ATTACK_OR_RUN: 
-      dialogueOptions = ['Attack', 'Run'];
-    break;
+    case BattleStep.ATTACK_OR_RUN:
+      dialogueOptions = ["Attack", "Run"];
+      break;
     case BattleStep.SELECT_ATTACK:
       dialogueOptions = momo.getAttackTypes();
-    break;
+      break;
   }
 
   return (
@@ -287,7 +310,7 @@ const Battle = () => {
             {componentState.step != BattleStep.INTRO && (
               <BattleCard
                 health={character.getHealth()}
-                characterName={character?.name ?? "..."}
+                characterName={character?.characterName ?? "..."}
               />
             )}
             <Slide direction="right">
@@ -305,22 +328,22 @@ const Battle = () => {
           <PokemonDialogueBox
             onSelectOption={(option) => {
               switch (componentState.step) {
-                case BattleStep.SELECT_ATTACK: 
+                case BattleStep.SELECT_ATTACK:
                   onSelectAttack(option);
-                break;
+                  break;
                 case BattleStep.ATTACK_OR_RUN: {
-                  if (option === 'Run') {
+                  if (option === "Run") {
                     navigate("/cutscene/run");
                     return;
                   }
-                  if (option === 'Attack') {
+                  if (option === "Attack") {
                     setComponentState((state) => ({
                       ...state,
                       messages: ["Choose an attack"],
                       step: BattleStep.SELECT_ATTACK,
                     }));
                   }
-                break;
+                  break;
                 }
               }
             }}

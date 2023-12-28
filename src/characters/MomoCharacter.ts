@@ -4,7 +4,7 @@ import { Serializable } from "../utils/Serializable";
 import BaseCharacter, { AttackEffectiness } from "./BaseCharacter";
 
 // TODO: Add tiles that momo can traverse as needed
-const eligibleTiles = new Set(["road", "grass", "water"] as TileType[]);
+const eligibleTiles = new Set(["wall", "grass", "water"] as TileType[]);
 
 export enum MomoAttacks {
   BARK = "Bark",
@@ -16,7 +16,7 @@ export default class MomoCharacter
   extends BaseCharacter
   implements Serializable<MomoCharacter>
 {
-  readonly name: string = "momo";
+  readonly characterName: string = "momo";
   protected energy: number = 100;
 
   // TODO: Replace with optimized image

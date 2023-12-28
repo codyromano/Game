@@ -2,25 +2,27 @@ import { TileType } from "../explore/tiles";
 import BaseCharacter, { AttackEffectiness } from "./BaseCharacter";
 import { MomoAttacks } from "./MomoCharacter";
 
+const spawnPositions: Set<string> = new Set(['10,14', '9,20', '2,46', '9,33']);
+
 export default class MagicoonCharacter extends BaseCharacter {
-  readonly name: string = "magicoon";
+  readonly characterName: string = "magicoon";
   readonly imageOptimized: string = "/images/magicoon-small.png";
   readonly imageFull: string = "/images/magicoon-full-alpha.png";
 
-  spawnProbability: number = 0.05;
+  spawnProbability: number = 1;
 
-  isEligibleForTile(tile: TileType) {
-    return tile === "road" || tile === "grass";
+  isEligibleForTile(_: TileType, coords: [number, number]) {
+    return spawnPositions.has(coords.join(','));
   }
 
-  receiveAttack(attackType: string) {
+  receiveAttack(attackType: string, attacker: BaseCharacter) {
     switch (attackType) {
       case MomoAttacks.BARK:
       case MomoAttacks.GROWL:
-        super.modifyHealth(-25);
+        super.modifyHealth(-attacker.getLevel() * 5);
         return AttackEffectiness.WEAK;
       case MomoAttacks.TWIRL_BOWTIE:
-        super.modifyHealth(-50);
+        super.modifyHealth(-attacker.getLevel() * 25);
         return AttackEffectiness.STRONG;
       default:
         return AttackEffectiness.MISS;

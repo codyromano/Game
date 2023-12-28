@@ -8,7 +8,7 @@ export enum AttackEffectiness {
 }
 
 export default abstract class BaseCharacter {
-  abstract readonly name: string;
+  abstract readonly characterName: string;
   abstract readonly imageOptimized: string;
   abstract readonly imageFull: string;
   protected level: number = 1;
@@ -22,11 +22,16 @@ export default abstract class BaseCharacter {
     attacker: BaseCharacter,
   ): AttackEffectiness;
 
-  abstract isEligibleForTile(tile: TileType): boolean;
+  abstract isEligibleForTile(tile: TileType, coords: [number, number]): boolean;
   abstract getAttackTypes(): string[];
 
   getLevel(): number {
     return this.level;
+  }
+
+  // Time in ms you have to dodge when fighting this character
+  getDodgeTimeLimit(): number {
+    return 250;
   }
 
   // The likelihood of a character spawning IF the
@@ -47,5 +52,11 @@ export default abstract class BaseCharacter {
 
     // Clamp 0-100
     this.health = Math.min(Math.max(this.health, 0), 100);
+  }
+
+  modifyLevel(amount: number) {
+    this.level += amount;
+    // Level cannot be less than 1
+    this.level = Math.max(this.level, 1);
   }
 }

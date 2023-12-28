@@ -1,159 +1,106 @@
 export type TileType =
-  | "grass"
-  | "road"
-  | "forest"
-  | "water"
-  | "flowers"
+  | "gras"
+  | "wall"
+  | "fore"
+  | "wate"
+  | "flow"
   | "tree"
-  | "marble"
-  | "fusilliMarble" | "rockyMarble" | "sand";
+  | "marb"
+  | "lava"
+  | "fuma" // fusilli marble
+  | "roma" // rocky marble
+  | "sand";
 
 export const tileAttributes: {
   [key in TileType]: {
     traversable: boolean;
   };
 } = {
-  grass: {
+  gras: {
     traversable: true,
   },
-  road: {
+  wall: {
+    traversable: false,
+  },
+  fore: {
     traversable: true,
   },
-  forest: {
+  wate: {
     traversable: true,
   },
-  water: {
-    traversable: true,
-  },
-  flowers: {
+  flow: {
     traversable: true,
   },
   tree: {
     traversable: false,
   },
-  marble: {
+  marb: {
     traversable: true,
   },
-  fusilliMarble: {
+  fuma: {
     traversable: true,
   },
   sand: {
     traversable: true,
   },
-  rockyMarble: {
+  roma: {
     traversable: true,
+  },
+  lava: {
+    traversable: true
   }
 };
+const tiles: TileType[][] = [
 
-class MapBuilder {
-  private map: TileType[][] = [];
-  private mapRow: TileType[] = [];
-
-  tile(tileType: TileType): MapBuilder {
-    return this.tiles(1, tileType);
-  }
-
-  tiles(n: number, ...sequence: TileType[]): MapBuilder {
-    for (let i = 0; i < n; i++) {
-      this.mapRow.push(sequence[i % sequence.length]);
-    }
-    return this;
-  }
-
-  // Apply a sequence of tiles to a new row matching the width of the previous row
-  matchPreviousRowLength(...sequence: TileType[]): MapBuilder {
-    const previousRowWidth = this.map[this.map.length - 1].length;
-    this.tiles(previousRowWidth, ...sequence);
-    return this;
-  }
-
-  repeatColumns(n: number = 1): MapBuilder {
-    const colsToRepeat = this.mapRow;
-
-    for (let i = 0; i < n; i++) {
-      this.mapRow = [...this.mapRow, ...colsToRepeat];
-    }
-    return this;
-  }
-  repeatRow(n: number = 1): MapBuilder {
-    this.endRow();
-
-    const rowToRepeat = this.map[this.map.length - 1];
-
-    for (let i = 0; i < n; i++) {
-      this.map.push([...rowToRepeat]);
-    }
-
-    return this;
-  }
-  endRow(): MapBuilder {
-    this.map.push(this.mapRow);
-    this.mapRow = [];
-    return this;
-  }
-  done(): TileType[][] {
-    return this.map;
-  }
-}
-
-const map = new MapBuilder();
-
-const tiles: TileType[][] = map
-  .tiles(5, "tree")
-  .tile("rockyMarble")
-  .tiles(43, "tree")
-  .endRow()
-  .tiles(5, "tree")
-  .tile("marble")
-  .tiles(43, "tree")
-  .repeatRow(5)
-  .tiles(5, "tree")
-  .tile("fusilliMarble")
-  .tiles(43, "tree")
-  .endRow()
-  .tiles(4, "tree")
-  .tiles(5, "road")
-  .tiles(3, "grass")
-  .repeatColumns(3)
-  .endRow()
-  .tiles(3, "tree")
-  .tile("road")
-  .tiles(3, "flowers")
-  .tile("road")
-  .tiles(3, "grass")
-  .repeatColumns(3)
-  .repeatRow(2)
-  .tiles(3, "tree")
-  .tiles(5, "road")
-  .tiles(3, "grass")
-  .repeatColumns(3)
-  .repeatRow(2)
-  .tiles(3, "grass")
-  .tile("road")
-  .matchPreviousRowLength("sand")
-  .endRow()
-  .tiles(3, "sand")
-  .tile("road")
-  .tiles(6, "sand")
-  .tile("road")
-  .matchPreviousRowLength("road")
-  .endRow()
-  // Ocean with bridge
-  .matchPreviousRowLength(
-    "water",
-    "water",
-    "water",
-    "road",
-    "water",
-    "water",
-    "water",
-  )
-  .repeatRow(10)
-  .matchPreviousRowLength("road")
-  .endRow()
-  .matchPreviousRowLength("grass")
-  .repeatRow(15)
-  .done();
-
+  // Rows 1-10
+  ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+  ["wall", "sand", "sand", "sand", "wall", "wate", "wate", "wate", "wate", "wall", "wate", "wate", "wate", "wate", "wate", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","tree","gras","gras","gras","gras","gras","gras","wall","gras","gras","gras","gras","gras","gras","gras","tree","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wall", "wate", "wall", "wate", "wate", "wall", "wate", "wate", "wate", "wate", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","tree","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","gras","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wall", "wate", "wall", "wate", "wate", "wall", "wate", "wate", "wate", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras", "gras", "gras","gras","gras","gras","gras","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","gras","wall","gras","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wall", "wate", "wall", "wate", "wate", "wall", "wate", "wate", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","gras","wall","gras","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wall", "sand", "wall", "wate", "wate", "wall", "wate", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","wall","gras","wall","gras","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wall", "sand", "wall", "wate", "wate", "wall", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","wall","gras","gras","gras","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wate", "sand", "wall", "wate", "wall", "wall", "sand", "sand", "sand", "sand", "sand", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "wate", "sand", "wall", "wate", "wate", "wall", "sand", "sand", "sand", "sand", "sand", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wall", "sand", "sand", "sand", "wall", "wate", "wate", "wall", "sand", "wall", "wall", "wall", "wall", "wall", "gras", "wall", "wall", "wall", "gras", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","tree","gras","tree","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+  
+  // Rows 11-20
+  ["wall", "sand", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "sand", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","tree","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "wate", "wate", "wate", "wate", "wate", "wate", "wate", "sand", "sand", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","sand","sand","wall"],
+  ["wall", "sand", "sand", "wate", "wate", "wate", "wate", "wate", "sand", "sand", "sand", "tree", "tree", "tree", "tree", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","sand","sand","sand","wall"],
+  ["wall", "sand", "sand", "sand", "wate", "wate", "wate", "sand", "sand", "sand", "sand", "tree", "gras", "tree", "tree", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","sand","gras","gras","gras","gras","gras","gras","sand","sand","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "sand", "sand", "sand", "wate", "sand", "sand", "sand", "sand", "sand", "tree", "tree", "gras", "tree", "gras", "gras", "gras", "gras", "gras", "wall", "wall", "gras", "gras", "gras", "gras","wall","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","gras","sand","sand","sand","sand","gras","gras","gras","sand","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "tree", "tree", "tree", "tree", "gras", "gras", "gras", "gras", "gras", "gras", "wall", "sand", "sand", "sand", "sand", "sand","sand","wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","gras","gras","gras","gras","gras","sand","sand","sand","sand","sand","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "tree", "tree", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","sand","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "tree", "tree", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "sand", "sand", "sand", "sand", "sand", "sand", "gras", "gras", "gras", "gras", "wall", "gras", "gras", "gras", "wall", "gras", "gras", "gras", "wall", "gras", "sand", "lava", "lava", "lava", "lava","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","sand","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "sand", "lava", "lava", "lava", "lava","sand","gras","gras","gras","gras","gras","gras","gras","gras", "sand","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+      
+  // Rows 21-30
+  ["wall", "marb", "wall", "marb", "wall", "marb", "wall", "marb", "wall", "gras", "gras", "gras", "gras", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand","gras","gras","gras","gras","gras","gras", "sand","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","lava","lava","wall","lava","wall"],
+  ["wall", "marb", "tree", "marb", "tree", "marb", "tree", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand", "gras","gras","gras","gras","sand","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","wall","wall","wall","lava","wall"],
+  ["wall", "marb", "wall", "marb", "wall", "marb", "wall", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand", "gras","sand","sand","sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","wall","lava","lava","lava","wall"],
+  ["wall", "marb", "tree", "marb", "tree", "marb", "tree", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand", "sand","sand","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","lava","lava","lava","lava","wall"],
+  ["wall", "marb", "wall", "marb", "wall", "marb", "wall", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "sand", "lava", "lava", "lava", "lava","sand", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","lava","lava","lava","lava","wall"],
+  ["wall", "marb", "tree", "marb", "tree", "marb", "tree", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "wall", "sand", "sand", "sand", "sand", "sand","sand", "wall","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall","lava","lava","lava","lava","lava","wall"],
+  ["wall", "marb", "wall", "marb", "wall", "marb", "wall", "marb", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+  ["wall", "marb", "tree", "marb", "tree", "marb", "tree", "marb", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+  ["wall", "marb", "wall", "marb", "wall", "marb", "wall", "marb", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","wall"],
+  ["wall", "marb", "tree", "marb", "tree", "tree", "tree", "marb", "wall", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree", "tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","tree","wall"],
+  
+  // Rows 31-40
+  ["wall", "wall", "wall", "marb", "wall", "wall", "wall", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "marb", "marb", "marb", "marb", "marb", "marb", "marb", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ["wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "wall", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras", "gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","gras","wall"],
+  ];
+  
+  
 
 export default tiles;
