@@ -12,6 +12,42 @@ import getItemPositions from "./explore/getItemPositions";
 import { ItemName } from "./items/BaseItem";
 import Storage from "./utils/Storage";
 
+
+type EntityName = 'momo' | 'levelUpItem' | 'healthItem';
+
+type Entity = {
+  id: string;
+  entityType: EntityName;
+  location: {
+    x: number;
+    y: number;
+  }
+};
+
+export interface GameStateV2 {
+  entities: Record<string, {
+    id: string;
+    entityType: EntityName;
+    location: {
+      x: number;
+      y: number;
+    }
+  }>;
+
+  entitiesByLocation: {
+    [x: number]: {
+      [y: number]: Entity[];
+    }
+  };
+
+  entityData: {
+    momo: {
+      health: 100,
+      energy: 100,
+    }
+  }
+}
+
 export interface GameState {
   currentPosition: [number, number];
   previousPosition: [number, number];

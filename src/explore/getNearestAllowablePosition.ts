@@ -1,89 +1,51 @@
 import { TileType, tileAttributes } from "./tiles";
 
-const getDistanceScore = (current: [number,number], target: [number, number]): number => {
-  return Math.abs(current[0] - target[0]) + Math.abs(current[1] - target[1]);
-};
+const MAX_TILES_PER_MOVE = 3;
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 /**
  * Given a current set of coordinates and target coordinates, determine the farthest point we can reach by traveling in a straight line,
  * until we reach a tile that is not traversable or inhabited by another character.
  */
 export default function getNearestAllowablePosition(
-  current: [number,number], target: [number, number],
+  current: [number,number],
+  target: [number, number],
+  // eslint-disable-next-line
   tiles: TileType[][],
-  characterMap: Record<string, string>): [number, number] | null {  
-  // All the coordinates along the route to the target destination (straight line)
-  const coordsOnRoute: Array<{
-    current: [number, number],
-    direction: [number, number]
-  }> = [
-    // Up
-    {current, direction: [-1, 0]},
-    // Down
-    {current, direction: [1, 0]},
-    // Left
-    {current, direction: [0, -1]},
-    // Right
-    {current, direction: [0, 1]},
-    // Diagonal - Up, left
-    {current, direction: [-1, -1]},
-    // Diagonal - Up, right
-    {current, direction: [-1, 1]},
-    // Diagonal - Down, left 
-    {current, direction: [1, -1]},
-    // Diagonal - Down, right 
-    {current, direction: [1, 1]}
-  ];
+  // eslint-disable-next-line
+  characterMap: Record<string, string>): [number, number] | null { 
 
-  let shortestDistance = Infinity;
-  let bestCoords: [number, number] | null = null;
+  console.info(`Starting at ${current.join(',')}. Target: ${target.join(',')}`);
 
-  while (coordsOnRoute.length) {
-    const coords = coordsOnRoute.pop();
+  // Distance from the player
+  const distanceX = clamp(target[0] - current[0], -MAX_TILES_PER_MOVE, MAX_TILES_PER_MOVE);
+  const distanceY = clamp(target[1] - current[1], -MAX_TILES_PER_MOVE, MAX_TILES_PER_MOVE);
+  const totalDistance = Math.abs(distanceX) + Math.abs(distanceY);
 
-    if (coords == null) {
-      return null;
+  let closestAllowablePosition: [number, number] = [...current];
+  const newCurrent: [number, number] = [...current];
+
+  for (let i=0; i<=totalDistance; i++) {
+    const [x, y] = newCurrent;
+    const tileType = tiles?.[x]?.[y];
+    const isTraversable = tileType != null && tileAttributes[tileType].traversable;
+
+    // No luck yet, but we're getting closer
+    if (isTraversable) {
+      console.log(`Swinging by ${x}, ${y}`);
+      
+      closestAllowablePosition = [x, y];
+      const directionX = newCurrent[0] === target[0] ? 0 : (newCurrent[0] > target[0] ? -1 : 1);
+      const directionY = newCurrent[1] === target[1] ? 0 : (newCurrent[1] > target[1] ? -1 : 1);
+
+      newCurrent[0]+= directionX;
+      newCurrent[1]+= directionY;
+    } else {
+      break;
     }
-
-    // We've reached the target destination
-    if (coords.current[0] === target[0] && coords.current[1] === target[1]) {
-      return coords.current;
-    }
-
-    // If we've reached a non-traversable tile, return the closest traversable 
-    // tile previously encountered or null if no such tile exists
-    const tileType: TileType | null = tiles?.[coords.current[0]]?.[coords.current[1]];
-
-    // Tile is out of bounds or not traversable 
-    if (tileType == null || !tileAttributes[tileType].traversable) {
-      continue;
-    }
-
-    const tileHasCharacter = characterMap[`${coords.current[0]},${coords.current[1]}`] != null;
-    const isCharacterAdjacent = Math.abs(current[0] - target[0]) === 1 || Math.abs(current[1] - target[1]);
-
-    if (tileHasCharacter) {
-      // Allow moving to a tile w/ a character if the player is directly adjacent to the tile
-      if (isCharacterAdjacent) {
-        return target;
-      }
-      // Otherwise return the open tile closest to this character along the route 
-      // This is to avoid unwanted character interactions
-      continue;
-    }
-
-    if (tileHasCharacter && isCharacterAdjacent) {
-      return target;
-    }
-
-    const score = getDistanceScore(coords.current, target);
-    if (score < shortestDistance) {
-      shortestDistance = score;
-      bestCoords = coords.current;
-    }
-
-    coordsOnRoute.push({current: [coords.current[0] + coords.direction[0], coords.current[1] + coords.direction[1]], direction: coords.direction});
   }
 
-  return bestCoords;
+  console.info(`Stopping at ${closestAllowablePosition.join(',')}`);
+  return closestAllowablePosition;
 }
