@@ -4,6 +4,8 @@ type LoadItem = {
   promise: Promise<HTMLImageElement>;
 };
 
+// Testing 
+
 export default async function preloadImages(
   imageMap: Record<string, string>,
   onLoad: (key: string, image: HTMLImageElement) => void,
