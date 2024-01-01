@@ -1,28 +1,10 @@
-import { TileType } from "../explore/tiles";
-import BaseRenderer, { RenderContext } from "./BaseRenderer";
 
-type RendererAttributes = {
-  tileType: TileType,
-};
+import BaseRenderer from "./BaseRenderer";
 
-type TileImages = 'sand' | 'road' | 'water';
+export default class TileRenderer extends BaseRenderer {
 
-export default class TileRenderer extends BaseRenderer<RendererAttributes, TileImages> {
-  tileType: TileType | undefined;
-
-  setAttributes(attributes: Partial<RendererAttributes>): void {
-    this.tileType = attributes.tileType;
-  }
-  render(canvas: CanvasRenderingContext2D, { x, y}: RenderContext) {
-    canvas.drawImage(
-      images[tileType],
-      x,
-      y,
-      tileSize,
-      tileSize,
-    );
-  }
-  async getImages() {
-    
+  render() {}
+  getImages() {
+    return Promise.resolve({});
   }
 }

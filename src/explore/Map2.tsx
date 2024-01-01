@@ -3,8 +3,8 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import useClickCoords from "./useClickCoords";
 import { GameState } from "../GameStateProvider";
 import ItemFactory from "../items/ItemFactory";
-import TileRenderer from "../renderers/TileRenderer";
-import { TileType } from "./tiles";
+// import TileRenderer from "../renderers/TileRenderer";
+// import { TileType } from "./tiles";
 //import useAnimatedCoordinates from "../useAnimateCoordinates";
 
 // Define the props type for the component
@@ -25,7 +25,7 @@ const MAX_RECURSIVE_DRAW_DEPTH = 10;
 
 // Recursively draw tiles surrounding the player
 
-const tileRenderer = new TileRenderer();
+// const tileRenderer = new TileRenderer();
 
 const drawSurroundingTile = (
   ctx: CanvasRenderingContext2D,
@@ -71,7 +71,7 @@ const drawSurroundingTile = (
     throw new Error(`No image has been defined for tile ${tileType}`);
   }
 
-  tileRenderer.setAttributes({ tileType: (tileType as TileType) });
+  // tileRenderer.setAttributes({ tileType: (tileType as TileType) });
 
   ctx.drawImage(
     images[tileType],
